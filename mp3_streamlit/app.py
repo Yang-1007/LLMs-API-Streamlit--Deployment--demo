@@ -14,8 +14,15 @@ agents.ACTIVE_MODEL = MODEL_SMALL
 if not os.path.exists(DB_PATH):
     create_local_database(CSV_PATH)
 
-st.set_page_config(page_title="Stock Agent Chat", page_icon="📈", layout="wide")
-st.title("📈Stock Agent Chat")
+st.set_page_config(page_title="Stock Agentic Chatbot", page_icon="📈", layout="wide")
+st.title("📈Stock Agentic Chatbot")
+
+WELCOME_MSG = (
+    "Hi, I’m your stock analysis assistant. I can answer questions using either the "
+    "Single Agent or Multi-Agent system (planner-solver-validator), and I can keep track of follow-up questions "
+    "across the conversation. Try asking about a stock’s valuation, price performance, "
+    "market status, top movers, or news sentiment."
+)
 
 # -----------------------------
 # Sidebar
@@ -36,20 +43,44 @@ with st.sidebar:
     )
 
     if st.button("Clear conversation", use_container_width=True):
-        st.session_state.messages = []
-        st.session_state.turn_history = []
+        st.session_state.messages = [
+            {
+                "role": "assistant",
+                "content": WELCOME_MSG,
+                "architecture": "system",
+                "model": "-"
+            }
+        ]
+        st.session_state.turn_history = [
+            {
+                "role": "assistant",
+                "content": WELCOME_MSG
+            }
+        ]
         st.rerun()
 
 # -----------------------------
 # Session state
 # -----------------------------
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = [
+        {
+            "role": "assistant",
+            "content": WELCOME_MSG,
+            "architecture": "system",
+            "model": "-"
+        }
+    ]
 
 # turn_history is passed to the agents
 # format: [{"role": "user"/"assistant", "content": "..."}]
 if "turn_history" not in st.session_state:
-    st.session_state.turn_history = []
+    st.session_state.turn_history = [
+        {
+            "role": "assistant",
+            "content": WELCOME_MSG
+        }
+    ]
 
 # -----------------------------
 # Set active model
